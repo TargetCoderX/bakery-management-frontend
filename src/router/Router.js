@@ -6,6 +6,10 @@ import ProtectedRoute from "../pages/utils/ProtectedRoute";
 const createRouter = (isAuth) => {
     let router = [
         {
+            path: "/",
+            element: isAuth ? <Navigate to="/dashboard" /> : <Navigate to={`/login`} />,
+        },
+        {
             path: "/login",
             element: isAuth ? <Navigate to="/dashboard" /> : <Login />,
         },
