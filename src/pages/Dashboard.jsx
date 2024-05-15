@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Authlayout from './layouts/Authlayout';
+import { titleContext } from '../contextApis/TitleContext';
 
 function Dashboard() {
+    const title = useContext(titleContext);
+    
+    /* setting page title using use context */
+    useEffect(() => {
+        title.settitle('Dashboard')
+    }, []);
     return (
         <Authlayout>
             <div>

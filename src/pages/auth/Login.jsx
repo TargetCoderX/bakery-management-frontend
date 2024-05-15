@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Guestlayout from '../layouts/Guestlayout';
+import { titleContext } from '../../contextApis/TitleContext';
+import { useNavigate } from 'react-router-dom';
+import { loginContext } from '../../contextApis/LoginContext';
 
 function Login() {
+    const title = useContext(titleContext);
+    const login = useContext(loginContext);
+    const navigate = useNavigate();
+
+    /* setting page title using use context */
+    useEffect(() => {
+        title.settitle("Login");
+    }, []);
     const [formState, setFormState] = useState({
         email: '',
         password: '',
@@ -22,14 +33,17 @@ function Login() {
         })
             .then(async response => {
                 let data = await response.json();
-                console.log(data);
+                if (data.status) {
+                    localStorage.setItem('secret_token', data.token);
+                    login.setisLoggedin(true);
+                    navigate('/dashboard');
+                }
             })
-
             .catch(error => console.log(error));
     }
     return (
         <Guestlayout>
-            <form className="card card-md" autocomplete="off" novalidate onSubmit={(e) => { submitLoginForm(e) }}>
+            <form className="card card-md" autoComplete="off" noValidate onSubmit={(e) => { submitLoginForm(e) }}>
                 <div className="card-body">
                     <h2 className="card-title text-center mb-4">Create new account</h2>
                     <div className="mb-3">
