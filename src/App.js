@@ -3,6 +3,7 @@ import { RouterProvider } from "react-router-dom";
 import createRouter from "./router/Router";
 import { titleContext } from "./contextApis/TitleContext";
 import { loginContext } from "./contextApis/LoginContext";
+import Cookies from "js-cookie";
 function App() {
   const [isLoggedin, setisLoggedin] = useState(false);
   const [title, settitle] = useState("");
@@ -10,7 +11,7 @@ function App() {
   const router = createRouter(isLoggedin);
   
   /* reseting state on page refresh based on token */
-  const checkToken = localStorage.getItem('secret_token');
+  const checkToken = Cookies.get('secret_token');
   useEffect(() => {
     if (checkToken)
       setisLoggedin(true);

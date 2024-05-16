@@ -3,25 +3,21 @@ import React from 'react';
 function Footer() {
   return (
     <div>
-      <footer className="footer footer-transparent d-print-none">
+      <footer className="footer footer-transparent d-print-none" style={{ 'position': 'fixed', 'bottom': 0, 'width': '100%' }}>
         <div className="container-xl">
           <div className="row text-center align-items-center flex-row-reverse">
             <div className="col-lg-auto ms-lg-auto">
-              <ul className="list-inline list-inline-dots mb-0">
-                <li className="list-inline-item"><a href="https://tabler.io/docs" target="_blank" className="link-secondary"
-                    rel="noopener">Documentation</a></li>
-                <li className="list-inline-item"><a href="./license.html" className="link-secondary">License</a></li>
-                <li className="list-inline-item"><a href="https://github.com/tabler/tabler" target="_blank"
-                    className="link-secondary" rel="noopener">Source code</a></li>
+              <ul className="list-inline list-inline-dots mb-0">                
                 <li className="list-inline-item">
                   <a href="https://github.com/sponsors/codecalm" target="_blank" className="link-secondary" rel="noopener">
+                    <span> Made With  </span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="icon text-pink icon-filled icon-inline" width="24"
                       height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                       stroke-linecap="round" stroke-linejoin="round">
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                       <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
                     </svg>
-                    Sponsor
+                     <span> By Soumya Manna</span>
                   </a>
                 </li>
               </ul>
@@ -29,14 +25,9 @@ function Footer() {
             <div className="col-12 col-lg-auto mt-3 mt-lg-0">
               <ul className="list-inline list-inline-dots mb-0">
                 <li className="list-inline-item">
-                  Copyright &copy; 2023
-                  <a href="." className="link-secondary">Tabler</a>.
-                  All rights reserved.
-                </li>
-                <li className="list-inline-item">
-                  <a href="./changelog.html" className="link-secondary" rel="noopener">
-                    v1.0.0-beta19
-                  </a>
+                  Copyright &copy; {new Date().getFullYear()}
+                  <a href="javascript:;" className="link-secondary"> Soumya Manna </a>.
+                  <span> All rights reserved.</span>
                 </li>
               </ul>
             </div>
