@@ -3,7 +3,7 @@ import React from 'react';
 function Footer() {
   return (
     <div>
-      <footer className="footer footer-transparent d-print-none" style={{ 'position': 'fixed', 'bottom': 0, 'width': '100%' }}>
+      <footer className="footer footer-transparent d-print-none">
         <div className="container-xl">
           <div className="row text-center align-items-center flex-row-reverse">
             <div className="col-lg-auto ms-lg-auto">
