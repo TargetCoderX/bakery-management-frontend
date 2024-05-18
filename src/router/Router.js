@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../pages/utils/ProtectedRoute";
+import Order from "../pages/Order";
 
 const createRouter = (isAuth) => {
     let router = [
@@ -16,6 +17,10 @@ const createRouter = (isAuth) => {
         {
             path: "/dashboard",
             element: <ProtectedRoute isAuth={isAuth}><Dashboard /></ProtectedRoute>,
+        },
+        {
+            path: "/orders/:customer_id",
+            element: <ProtectedRoute isAuth={isAuth}><Order /></ProtectedRoute>,
         },
     ]
     return createBrowserRouter(router);

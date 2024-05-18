@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { showConfirmAlert } from '../helpers/commonhelper';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 function Dashboard() {
     const title = useContext(titleContext);
@@ -134,7 +135,7 @@ function Dashboard() {
                                                     <td style={{ 'width': '15%' }}>{element.phone}</td>
                                                     <td style={{ 'width': '15%' }}>{element.email}</td>
                                                     <td style={{ 'width': '20%' }}>
-                                                        <button className="btn btn-success m-2 btn-sm" style={{ "width": "100px" }}>View Orders</button>
+                                                        <Link to={`/orders/${element.id}`} className="btn btn-success m-2 btn-sm" style={{ "width": "100px" }}>View Orders</Link>
                                                         <button className="btn btn-danger m-2 btn-sm" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }, "Confirm to delete", "Once deleted, you cannot recover this any more !") }} style={{ "width": "100px" }}>Delete</button>
                                                     </td>
                                                 </tr>

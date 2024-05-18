@@ -7,7 +7,7 @@ import { titleContext } from "./contextApis/TitleContext";
 import { loginContext } from "./contextApis/LoginContext";
 import Cookies from "js-cookie";
 function App() {
-  const [isLoggedin, setisLoggedin] = useState(false);
+  const [isLoggedin, setisLoggedin] = useState(true);
   const [title, settitle] = useState("");
   document.title = `${title}-Bakery Management System`;
   const router = createRouter(isLoggedin);
@@ -15,8 +15,8 @@ function App() {
   /* reseting state on page refresh based on token */
   const checkToken = Cookies.get('secret_token');
   useEffect(() => {
-    if (checkToken)
-      setisLoggedin(true);
+    if (!checkToken)
+      setisLoggedin(false);
   }, []);
 
   return (

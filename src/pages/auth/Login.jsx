@@ -36,7 +36,6 @@ function Login() {
         })
             .then(async response => {
                 let data = await response.json();
-                console.log(data);
                 if (data.status) {
                     Cookies.set('secret_token', data.token, { expires: 1 })
                     localStorage.setItem('user_data', JSON.stringify(data.user));
