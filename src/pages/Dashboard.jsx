@@ -11,6 +11,7 @@ function Dashboard() {
     const [customerData, setcustomerData] = useState([]);
     const [page, setPage] = useState(1);
     const [total_records, setTotalRecords] = useState(0);
+    const [searchKey, setsearchKey] = useState("");
     /* setting page title using use context */
     useEffect(() => {
         title.settitle('Dashboard')
@@ -56,14 +57,51 @@ function Dashboard() {
             .catch(error => console.log(error));
     }
 
+    const search = (e) => {
+        let searchKeyLocal = e.target.value;
+        setsearchKey(searchKeyLocal)
+        if (searchKeyLocal !== '') {
+            fetch(`${process.env.REACT_APP_SERVER_URL}/search-customer?search_key=${searchKeyLocal}`, {
+                headers: {
+                    "Authorization": Cookies.get('secret_token')
+                }
+            })
+                .then(async response => {
+                    let data = await response.json();
+                    setPage(0);
+                    setTotalRecords(data.total_count);
+                    setcustomerData(data.data);
+                })
+                .catch(error => console.log(error));
+        } else {
+            console.log(searchKeyLocal);
+            customerDataApi(1, true);
+        }
+    }
+
     return (
         <Authlayout>
             <div>
                 <div className="row g-2 align-items-center">
-                    <div className="col">
+                    <div className="col-10">
                         <h2 className="page-title m-2">
                             Cuatomer Data ({customerData.length} out of {total_records} showing)
                         </h2>
+                    </div>
+                    <div className="col-2">
+                        <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+                            <div className="input-icon">
+                                <span className="input-icon-addon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24"
+                                        strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                                        <path d="M21 21l-6 -6" />
+                                    </svg>
+                                </span>
+                                <input type="text" onChange={(e) => { search(e) }} value={searchKey} className="form-control" placeholder="Search…" aria-label="Search in website" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="row">
