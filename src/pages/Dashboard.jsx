@@ -97,7 +97,7 @@ function Dashboard() {
                                                     <td style={{ 'width': '15%' }}>{element.email}</td>
                                                     <td style={{ 'width': '20%' }}>
                                                         <button className="btn btn-success m-2 btn-sm" style={{ "width": "100px" }}>View Orders</button>
-                                                        <button className="btn btn-danger m-2 btn-sm" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }) }} style={{ "width": "100px" }}>Delete</button>
+                                                        <button className="btn btn-danger m-2 btn-sm" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }, "Confirm to delete", "Once deleted, you cannot recover this any more !") }} style={{ "width": "100px" }}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}

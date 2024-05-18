@@ -4,10 +4,10 @@ const accessLocalStorage = (key_name) => {
     return JSON.parse(localStorage.getItem(key_name));
 }
 
-const showConfirmAlert = (deleteCustomerFunction) => {
+const showConfirmAlert = (deleteCustomerFunction,title,description) => {
     confirmAlert({
-        title: 'Confirm to submit',
-        message: 'Are you sure to do this.',
+        title: title,
+        message: description,
         buttons: [
             {
                 label: 'Yes',
