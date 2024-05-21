@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import { accessLocalStorage } from '../helpers/commonhelper';
 import { loginContext } from '../contextApis/LoginContext';
 import Cookies from 'js-cookie';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function Header() {
   const login = useContext(loginContext);
+  const uselocation = useLocation();
   const logout = (e) => {
     login.setisLoggedin(false);
     Cookies.remove('secret_token');
@@ -45,7 +46,7 @@ function Header() {
           <div className="navbar">
             <div className="container-xl">
               <ul className="navbar-nav">
-                <li className="nav-item">
+                <li className={`nav-item ${uselocation.pathname === '/dashboard' ? 'active' : ''}`}>
                   <Link className="nav-link" to="/dashboard">
                     <span
                       className="nav-link-icon d-md-none d-lg-inline-block">
@@ -62,8 +63,8 @@ function Header() {
                     </span>
                   </Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="#">
+                <li className={`nav-item ${uselocation.pathname === '/all-orders' ? 'active' : ''}`}>
+                  <Link className="nav-link" to="/all-orders">
                     <span
                       className="nav-link-icon d-md-none d-lg-inline-block">
                       <svg fill="#000000" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">

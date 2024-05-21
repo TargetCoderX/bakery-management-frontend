@@ -3,6 +3,7 @@ import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../pages/utils/ProtectedRoute";
 import Order from "../pages/Order";
+import AllOrders from "../pages/AllOrders";
 
 const createRouter = (isAuth) => {
     let router = [
@@ -21,6 +22,10 @@ const createRouter = (isAuth) => {
         {
             path: "/orders/:customer_id",
             element: <ProtectedRoute isAuth={isAuth}><Order /></ProtectedRoute>,
+        },
+        {
+            path: "/all-orders",
+            element: <ProtectedRoute isAuth={isAuth}><AllOrders /></ProtectedRoute>,
         },
     ]
     return createBrowserRouter(router);
