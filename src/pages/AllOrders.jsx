@@ -49,47 +49,51 @@ function AllOrders() {
     }
     return (
         <Authlayout>
-            <div className="row">
-                <div className="col-md-12 text-end">
-                    <input type="text" className="w-25 form-control d-inline-block m-2" placeholder='Search' value={search} onChange={(e) => { onchangeSearchHandler(e) }} />
-                </div>
-                <div className="col-md-12">
-                    <table className="table" id='table'>
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Customer Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">Product</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                allOrders && allOrders.length > 0 ? (
-                                    allOrders.map((elements, index) => {
-                                        return (
+            <div className="card">
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-md-12 text-end">
+                            <input type="text" className="w-25 form-control d-inline-block m-2" placeholder='Search' value={search} onChange={(e) => { onchangeSearchHandler(e) }} />
+                        </div>
+                        <div className="col-md-12">
+                            <table className="table" id='table'>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Customer Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        allOrders && allOrders.length > 0 ? (
+                                            allOrders.map((elements, index) => {
+                                                return (
+                                                    <tr>
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td>{elements.name}</td>
+                                                        <td>{elements.email}</td>
+                                                        <td>{elements.phone}</td>
+                                                        <td>{elements.product_name}</td>
+                                                        <td>{elements.price}</td>
+                                                        <td>{elements.date}</td>
+                                                    </tr>
+                                                )
+                                            })
+                                        ) : (
                                             <tr>
-                                                <th scope="row">{index + 1}</th>
-                                                <td>{elements.name}</td>
-                                                <td>{elements.email}</td>
-                                                <td>{elements.phone}</td>
-                                                <td>{elements.product_name}</td>
-                                                <td>{elements.price}</td>
-                                                <td>{elements.date}</td>
+                                                <td colSpan={7} className='text-center'>No Record Found</td>
                                             </tr>
                                         )
-                                    })
-                                ) : (
-                                    <tr>
-                                        <td colSpan={7} className='text-center'>No Record Found</td>
-                                    </tr>
-                                )
-                            }
-                        </tbody>
-                    </table>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </Authlayout>
