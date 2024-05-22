@@ -13,6 +13,12 @@ function Dashboard() {
     const [page, setPage] = useState(1);
     const [total_records, setTotalRecords] = useState(0);
     const [searchKey, setsearchKey] = useState("");
+    const [newCustomer, setnewCustomer] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+    });
     /* setting page title using use context */
     useEffect(() => {
         title.settitle('Dashboard')
@@ -80,27 +86,67 @@ function Dashboard() {
         }
     }
 
+    const newCustomerONChangeHandle = (e) => {
+        const { name, value } = e.target;
+        setnewCustomer({ ...newCustomer, [name]: value })
+    }
+
+    const submitNewCustomer = (e) => {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/add-customer`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookies.get('secret_token'),
+            },
+            body: JSON.stringify(newCustomer)
+        })
+
+            .then(async response => {
+                let data = await response.json();
+                if (data.status === 1) {
+                    toast.success(data.message);
+                    customerDataApi(1, true);
+                } else {
+                    toast.error(data.message);
+                }
+            })
+            .catch(error => console.log(error));
+    }
+
     return (
         <Authlayout>
             <div>
-                <div className="row g-2 align-items-center">
-                    <div className="col-10">
-                        <h2 className="page-title m-2">
-                            Cuatomer Data ({customerData.length} out of {total_records} showing)
-                        </h2>
-                    </div>
-                    <div className="col-2">
-                        <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-                            <div className="input-icon">
-                                <span className="input-icon-addon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24"
-                                        strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                                        <path d="M21 21l-6 -6" />
-                                    </svg>
-                                </span>
-                                <input type="text" onChange={(e) => { search(e) }} value={searchKey} className="form-control" placeholder="Search…" aria-label="Search in website" />
+                <div class="page-header d-print-none">
+                    <div class="container-xl">
+                        <div class="row g-2 align-items-center">
+                            <div class="col">
+                                <div class="page-pretitle">
+                                    Overview
+                                </div>
+                                <h2 class="page-title">
+                                    Dashboard
+                                </h2>
+                            </div>
+                            <div class="col-auto ms-auto d-print-none">
+                                <div class="btn-list">
+                                    <button class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-add-customer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
+                                        New Customer
+                                    </button>
+                                    <div className="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+                                        <div className="input-icon">
+                                            <span className="input-icon-addon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24"
+                                                    strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+                                                    <path d="M21 21l-6 -6" />
+                                                </svg>
+                                            </span>
+                                            <input type="text" onChange={(e) => { search(e) }} value={searchKey} className="form-control" placeholder="Search…" aria-label="Search in website" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -132,11 +178,12 @@ function Dashboard() {
                                                     <td style={{ 'width': '5%' }}>{index + 1}</td>
                                                     <td style={{ 'width': '15%' }}>{element.name}</td>
                                                     <td style={{ 'width': '15%' }}>{element.address}</td>
-                                                    <td style={{ 'width': '15%' }}>{element.phone}</td>
+                                                    <td style={{ 'width': '15% !important' }}>{element.phone}</td>
                                                     <td style={{ 'width': '15%' }}>{element.email}</td>
-                                                    <td style={{ 'width': '20%' }}>
-                                                        <Link to={`/orders/${element.id}`} className="btn btn-success m-2 btn-sm" style={{ "width": "100px" }}>View Orders</Link>
-                                                        <button className="btn btn-danger m-2 btn-sm" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }, "Confirm to delete", "Once deleted, you cannot recover this any more !") }} style={{ "width": "100px" }}>Delete</button>
+                                                    <td style={{ 'width': '45%', 'display': 'flex' }} >
+                                                        <Link to={`/orders/${element.id}`} className="btn btn-success m-2" style={{ "width": "100px" }}>View Orders</Link>
+                                                        <button className="btn btn-info m-2" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }, "Confirm to delete", "Once deleted, you cannot recover this any more !") }} style={{ "width": "100px" }}>New Bill</button>
+                                                        <button className="btn btn-danger m-2" onClick={() => { showConfirmAlert(() => { deleteCustomers(element.id) }, "Confirm to delete", "Once deleted, you cannot recover this any more !") }} style={{ "width": "100px" }}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -146,6 +193,43 @@ function Dashboard() {
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+            <div class="modal modal-blur fade" id="modal-add-customer" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Customer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" value={newCustomer.name} onChange={(e) => { newCustomerONChangeHandle(e) }} name="name" placeholder="Customer Name" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="text" class="form-control" value={newCustomer.email} onChange={(e) => { newCustomerONChangeHandle(e) }} name="email" placeholder="Customer Email" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" class="form-control" value={newCustomer.phone} onChange={(e) => { newCustomerONChangeHandle(e) }} name="phone" placeholder="Customer Phone" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" value={newCustomer.address} onChange={(e) => { newCustomerONChangeHandle(e) }} name="address" placeholder="Customer Address" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button class="btn btn-primary ms-auto" data-bs-dismiss="modal" onClick={(e) => { submitNewCustomer(e) }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                                Create new customer
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

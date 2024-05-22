@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 function AllOrders() {
     const title = useContext(titleContext);
     const [allOrders, setallOrders] = useState([]);
+    const [search, setsearch] = useState('');
     useEffect(() => {
         title.settitle('Orders')
         getAllOrders();
@@ -22,11 +23,38 @@ function AllOrders() {
             })
             .catch(error => console.log(error));
     }
+    const onchangeSearchHandler = (e) => {
+        setsearch(e.target.value);
+        let searchInput = e.target.value;
+        let input = searchInput.toLowerCase();
+        let table = document.getElementById('table');
+        let rows = table.getElementsByTagName('tr');
+        for (let i = 1; i < rows.length; i++) {  // Start from 1 to skip the header row
+            let cells = rows[i].getElementsByTagName('td');
+            let rowContainsSearchTerm = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().includes(input)) {
+                    rowContainsSearchTerm = true;
+                    break;
+                }
+            }
+
+            if (rowContainsSearchTerm) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    }
     return (
         <Authlayout>
             <div className="row">
+                <div className="col-md-12 text-end">
+                    <input type="text" className="w-25 form-control d-inline-block m-2" placeholder='Search' value={search} onChange={(e) => { onchangeSearchHandler(e) }} />
+                </div>
                 <div className="col-md-12">
-                    <table className="table">
+                    <table className="table" id='table'>
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
