@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Authlayout from './layouts/Authlayout';
 import { titleContext } from '../contextApis/TitleContext';
 import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 function Billing() {
     const title = useContext(titleContext);
-    const [form, setform] = useState([{ 'product': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }]);
+    const [form, setform] = useState([{ 'product': '', 'product_id': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }]);
     const [products, setproducts] = useState([]);
-    const [customerNumber, setcustomerNumber] = useState('');
-    const [customerData, setCustomerData] = useState({ name: '', email: '', address: '' });
+    const [customerData, setCustomerData] = useState({ id: 0, name: '', phone: '', email: '', address: '' });
+    const disableCustomerEntry = useRef(true);
     useEffect(() => {
         title.settitle('Billing');
         getProducts();
@@ -16,7 +17,7 @@ function Billing() {
 
     const addNewItems = (e) => {
         e.preventDefault();
-        setform([...form, { 'product': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }])
+        setform([...form, { 'product': '', 'product_id': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }])
     }
     const deleteProduct = (e, index) => {
         e.preventDefault();
@@ -43,7 +44,7 @@ function Billing() {
         const { name, value } = e.target;
         const formData = [...form];
         if (name === 'product')
-            formData[parentIndex] = { ...formData[parentIndex], 'single_price': e.target.selectedOptions[0].dataset.product_price }
+            formData[parentIndex] = { ...formData[parentIndex], 'single_price': e.target.selectedOptions[0].dataset.product_price, 'product_id': e.target.selectedOptions[0].dataset.product_id }
         formData[parentIndex] = { ...formData[parentIndex], [name]: value };
         const subtotal = formData[parentIndex].single_price * formData[parentIndex].quantity;
         formData[parentIndex] = { ...formData[parentIndex], 'sub_total': subtotal };
@@ -53,33 +54,98 @@ function Billing() {
         const { name, value } = e.target;
         setCustomerData({ ...customerData, [name]: value })
     }
+    const customerNumberHandler = (e) => {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/get-customer-by-phone/${customerData.phone}`, {
+            headers: {
+                'Authorization': Cookies.get('secret_token'),
+            }
+        })
+            .then(async response => {
+                let data = await response.json();
+                let userData = {};
+                if (data.status) {
+                    if (data.data) {
+                        // const { id, ...rest } = data.data;
+                        userData = data.data;
+                        toast.success('User found with this phone number. We have field the details for you')
+                        disableCustomerEntry.current = true;
+                    }
+                    else {
+                        toast.error('No user found, Please create a new one.')
+                        userData = { ...customerData, 'name': '', 'email': '', 'address': '', 'id': 0 };
+                        disableCustomerEntry.current = false;
+                    }
+
+                    setCustomerData(userData);
+                }
+            })
+            .catch(error => console.log(error));
+    }
+    const checkCondition = () => {
+        return Object.values(customerData).some(value => value === '') || form.some(element => {
+            return element.product === '' ||
+                element.quantity === 0 ||
+                element.sub_total === 0 ||
+                element.single_price === 0
+        });
+    }
+    const handleBillingSubmit = (e) => {
+        e.preventDefault();
+        let data = {
+            'customer_data': customerData,
+            'is_customer': disableCustomerEntry.current,
+            'bill': form,
+        }
+        fetch(`${process.env.REACT_APP_SERVER_URL}/save-bill`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": Cookies.get('secret_token'),
+            },
+            body: JSON.stringify(data)
+        })
+            .then(async response => {
+                let data = await response.json();
+                toast.success(data.message);
+                setform([{ 'product': '', 'product_id': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }]);
+                setCustomerData({ id: 0, name: '', phone: '', email: '', address: '' });
+            })
+            .catch(error => console.log(error));
+    }
     return (
         <Authlayout>
             <div className="card">
                 <div className="card-body">
                     <div className="row">
-                        <div className="col-md-6 mb-2">
-                            <div className="form-group">
-                                <label htmlFor="" className="form-label">Phone Number</label>
-                                <input type="text" value={customerNumber} onChange={(e) => { setcustomerNumber(e.target.data) }} placeholder='Customer phone number' className="form-control" />
+                        <div className="col-md-12 mb-2">
+                            <div className="row align-items-end justify-content-center">
+                                <div className="col-10">
+                                    <div className="form-group">
+                                        <label htmlFor="" className="form-label">Phone Number</label>
+                                        <input type="text" value={customerData.phone} onChange={(e) => { setCustomerData({ ...customerData, 'phone': e.target.value }) }} placeholder='Customer phone number' className="form-control" />
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <button className="btn btn-info" onClick={(e) => { customerNumberHandler(e) }} >Search</button>
+                                </div>
                             </div>
                         </div>
-                        <div className="col-md-6 mb-2">
+                        <div className="col-md-4 mb-2">
                             <div className="form-group">
                                 <label htmlFor="" className="form-label">Customer Name</label>
-                                <input type="text" value={customerData.name} name='name' onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer phone number' className="form-control" />
+                                <input type="text" value={customerData.name} name='name' readOnly={disableCustomerEntry.current} onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer name' className="form-control" />
                             </div>
                         </div>
-                        <div className="col-md-6 mb-2">
+                        <div className="col-md-4 mb-2">
                             <div className="form-group">
                                 <label htmlFor="" className="form-label">Customer Email</label>
-                                <input type="text" value={customerData.email} name='email' onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer phone number' className="form-control" />
+                                <input type="email" value={customerData.email} name='email' readOnly={disableCustomerEntry.current} onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer email' className="form-control" />
                             </div>
                         </div>
-                        <div className="col-md-6 mb-2">
+                        <div className="col-md-4 mb-2">
                             <div className="form-group">
                                 <label htmlFor="" className="form-label">Customer Address</label>
-                                <input type="text" value={customerData.address} name='address' onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer phone number' className="form-control" />
+                                <input type="text" value={customerData.address} name='address' readOnly={disableCustomerEntry.current} onChange={(e) => { handleCustomerDataChange(e) }} placeholder='Customer address' className="form-control" />
                             </div>
                         </div>
                         <div className="col-md-12 mt-4">
@@ -88,7 +154,7 @@ function Billing() {
                                 <button className="btn btn-success" onClick={(e) => { addNewItems(e) }}>Add Product</button>
                             </div>
 
-                            <form>
+                            <form onSubmit={(e) => { handleBillingSubmit(e) }}>
                                 {form && form.map((element, index) => (
                                     <div className="row">
                                         <div className="col-md-3 mb-2">
@@ -98,7 +164,7 @@ function Billing() {
                                                     <option value="" style={{ 'display': 'none' }}>Select Product</option>
                                                     {
                                                         products && products.map((element) => (
-                                                            <option data-product_code={element.code} data-product_price={element.price}>{element.name}</option>
+                                                            <option data-product_code={element.code} data-product_id={element.id} data-product_price={element.price}>{element.name}</option>
                                                         ))
                                                     }
                                                 </select>
@@ -113,7 +179,7 @@ function Billing() {
                                         <div className="col-md-3 mb-2">
                                             <div className="form-group">
                                                 <lable className="form-label">Price</lable>
-                                                <input type="text" value={element.single_price * element.quantity} name='sub_total' readOnly={false} className="form-control" />
+                                                <input type="text" value={element.single_price * element.quantity} name='sub_total' readOnly={true} className="form-control" />
                                             </div>
                                         </div>
                                         <div className="col-md-3 mb-2 d-flex align-items-end justify-content-center">
@@ -123,6 +189,9 @@ function Billing() {
                                         </div>
                                     </div>
                                 ))}
+                                <div className="mt-3 text-center">
+                                    <button type='submit' className="btn btn-primary" disabled={checkCondition()} >Create Bill</button>
+                                </div>
                             </form>
                         </div>
                     </div>
