@@ -3,7 +3,7 @@ import Authlayout from './layouts/Authlayout';
 import { titleContext } from '../contextApis/TitleContext';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 function Billing() {
     const title = useContext(titleContext);
