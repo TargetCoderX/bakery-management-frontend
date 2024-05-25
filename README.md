@@ -50,7 +50,7 @@ Start the server
 Go to this repository for backend code 
 
 [Backend Of Bakery Management](https://github.com/TargetCoderX/bakery-management-backend)
-## Authors
+## Author
 
 - [@Soumya Manna](https://portfolio-frontend-soumya-manna-1999.vercel.app/)
 
