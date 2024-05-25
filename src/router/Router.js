@@ -29,7 +29,7 @@ const createRouter = (isAuth) => {
             element: <ProtectedRoute isAuth={isAuth}><AllOrders /></ProtectedRoute>,
         },
         {
-            path: "/billing",
+            path: "/billing/:phone_number?",
             element: <ProtectedRoute isAuth={isAuth}><Billing /></ProtectedRoute>,
         },
     ]

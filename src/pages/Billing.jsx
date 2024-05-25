@@ -3,6 +3,7 @@ import Authlayout from './layouts/Authlayout';
 import { titleContext } from '../contextApis/TitleContext';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { useLocation, useParams } from 'react-router-dom';
 
 function Billing() {
     const title = useContext(titleContext);
@@ -10,11 +11,22 @@ function Billing() {
     const [products, setproducts] = useState([]);
     const [customerData, setCustomerData] = useState({ id: 0, name: '', phone: '', email: '', address: '' });
     const disableCustomerEntry = useRef(true);
+    const [billNumber, setbillNumber] = useState('');
+    const [programetacillySetPhone, setprogrametacillySetPhone] = useState(false);
+    const searchButton = useRef(null);
+    const params = useParams();
     useEffect(() => {
         title.settitle('Billing');
         getProducts();
+        setbillNumber((Math.floor(Math.random() * 1000) + 1).toString().padStart(6, '0'))
+        if (params.phone_number !== 'undefined') {
+            setCustomerData({ ...customerData, 'phone': params.phone_number });
+            setprogrametacillySetPhone(true);
+        }
     }, []);
-
+    useEffect(() => {
+        searchButton.current.click();
+    }, [programetacillySetPhone])
     const addNewItems = (e) => {
         e.preventDefault();
         setform([...form, { 'product': '', 'product_id': '', 'quantity': 1, 'sub_total': 0, 'single_price': 0 }])
@@ -27,7 +39,6 @@ function Billing() {
             setform(newform);
         }
     }
-
     const getProducts = () => {
         fetch(`${process.env.REACT_APP_SERVER_URL}/get-all-products`, {
             headers: {
@@ -112,11 +123,22 @@ function Billing() {
             })
             .catch(error => console.log(error));
     }
+    const allTotalBillingCounter = () => {
+        let total = 0;
+        form && form.map((element) => {
+            return total += element.sub_total
+        })
+        return total;
+    }
     return (
         <Authlayout>
             <div className="card">
                 <div className="card-body">
                     <div className="row">
+                        <div className="col-md-12 d-flex align-items-end justify-content-between">
+                            <h2>Bill Number: {billNumber}</h2>
+                            <h2>Total Amount: ₹{allTotalBillingCounter(0)}</h2>
+                        </div>
                         <div className="col-md-12 mb-2">
                             <div className="row align-items-end justify-content-center">
                                 <div className="col-10">
@@ -126,7 +148,7 @@ function Billing() {
                                     </div>
                                 </div>
                                 <div className="col">
-                                    <button className="btn btn-info" onClick={(e) => { customerNumberHandler(e) }} >Search</button>
+                                    <button className="btn btn-info" ref={searchButton} onClick={(e) => { customerNumberHandler(e) }} >Search</button>
                                 </div>
                             </div>
                         </div>

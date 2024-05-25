@@ -133,7 +133,8 @@ function Order() {
                                     <thead>
                                         <tr>
                                             <th>SL.No</th>
-                                            <th>product Name</th>
+                                            <th>Product Name</th>
+                                            <th>Quantity</th>
                                             <th>Price</th>
                                             <th>Date of purchase</th>
                                         </tr>
@@ -144,6 +145,7 @@ function Order() {
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
                                                     <td>{element.product_name}</td>
+                                                    <td>{element.quantity}</td>
                                                     <td>{element.price}</td>
                                                     <td>{element.date}</td>
                                                 </tr>
