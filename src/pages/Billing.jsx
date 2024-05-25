@@ -25,7 +25,6 @@ function Billing() {
         }
     }, []);
     useEffect(() => {
-        console.log(params.phone_number);
         if (params.phone_number !== undefined) {
             searchButton.current.click();
         }
