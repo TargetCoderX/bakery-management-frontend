@@ -19,13 +19,16 @@ function Billing() {
         title.settitle('Billing');
         getProducts();
         setbillNumber((Math.floor(Math.random() * 1000) + 1).toString().padStart(6, '0'))
-        if (params.phone_number !== 'undefined') {
+        if (params.phone_number !== undefined) {
             setCustomerData({ ...customerData, 'phone': params.phone_number });
             setprogrametacillySetPhone(true);
         }
     }, []);
     useEffect(() => {
-        searchButton.current.click();
+        console.log(params.phone_number);
+        if (params.phone_number !== undefined) {
+            searchButton.current.click();
+        }
     }, [programetacillySetPhone])
     const addNewItems = (e) => {
         e.preventDefault();
